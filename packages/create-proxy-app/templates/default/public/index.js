@@ -35,7 +35,7 @@ async function navigate(url) {
 		await init();
 	}
 	if (!url.startsWith("http")) {
-		url = `https://${url}`;
+		url = `https://duckduckgo.com/?q=${encodeURIComponent(url)`;
 	}
 	await frame.go(url);
 	frameWrapper.style.display = "flex";
