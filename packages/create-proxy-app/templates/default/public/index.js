@@ -34,9 +34,19 @@ async function navigate(url) {
 	if (!frame || !controller) {
 		await init();
 	}
-	if (!url.startsWith("http")) {
-		url = `https://duckduckgo.com/?q=${encodeURIComponent(url)`;
+
+	const looksLikeUrl =
+		/^https?:\/\//i.test(url) ||
+		/^[a-z0-9-]+(\.[a-z0-9-]+)+(\/\S*)?$/i.test(url.trim());
+
+	if (looksLikeUrl) {
+		if (!url.startsWith("http")) {
+			url = `https://${url}`;
+		}
+	} else {
+		url = `https://duckduckgo.com/?q=${encodeURIComponent(url)}`;
 	}
+
 	await frame.go(url);
 	frameWrapper.style.display = "flex";
 }
