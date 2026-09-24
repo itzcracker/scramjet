@@ -44,7 +44,7 @@ async function navigate(url) {
 			url = `https://${url}`;
 		}
 	} else {
-		url = `https://duckduckgo.com/?q=${encodeURIComponent(url)}`;
+		url = `https://search.brave.com/search?q=${encodeURIComponent(url)}`;
 	}
 
 	await frame.go(url);
