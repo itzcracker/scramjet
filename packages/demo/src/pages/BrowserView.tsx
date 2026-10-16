@@ -19,14 +19,34 @@ export const browserState = createState({
 	frame: null! as Frame,
 });
 
+const SEARCH_URL = "https://duckduckgo.com/?q=";
+
+// Turns omnibox input into a URL: full URLs and bare domains are visited
+// directly, anything else is searched on DuckDuckGo.
+export function resolveInput(input: string): string {
+	const value = input.trim();
+	if (/^https?:\/\//i.test(value)) {
+		try {
+			return new URL(value).href;
+		} catch {}
+	}
+	if (!/\s/.test(value) && /^[^/?#]+\.[a-z]{2,}(:\d+)?([/?#].*)?$/i.test(value)) {
+		try {
+			return new URL(`https://${value}`).href;
+		} catch {}
+	}
+	return SEARCH_URL + encodeURIComponent(value);
+}
+
+export function navigateTo(input: string) {
+	if (!input.trim()) return;
+	browserState.url = resolveInput(input);
+	demoSettingsStore.homeUrl = browserState.url;
+	browserState.frame?.go(browserState.url);
+}
+
 export const Omnibox: Component = function (cx) {
-	const navigate = () => {
-		if (!browserState.url.startsWith("http")) {
-			browserState.url = `https://${browserState.url}`;
-		}
-		demoSettingsStore.homeUrl = browserState.url;
-		browserState.frame?.go(browserState.url);
-	};
+	const navigate = () => navigateTo(browserState.url);
 	return (
 		<form
 			class="url-form"

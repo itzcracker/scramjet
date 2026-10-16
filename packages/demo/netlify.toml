@@ -1,0 +1,4 @@
+[build]
+  # Compiles the Rust/wasm rewriter (not committed to git) before building the demo.
+  command = "bash scripts/netlify-build.sh"
+  publish = "dist"

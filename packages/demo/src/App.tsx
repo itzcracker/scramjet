@@ -5,7 +5,8 @@ import BrowserView from "./pages/BrowserView";
 import RequestViewer from "./pages/RequestViewer";
 import PlaygroundView from "./pages/Playground";
 import SettingsView from "./pages/SettingsPage";
-import { Omnibox } from "./pages/BrowserView";
+import { Omnibox, navigateTo } from "./pages/BrowserView";
+import Landing from "./components/Landing";
 import { requestsState } from "./pages/RequestViewer";
 
 const App: Component<
@@ -13,11 +14,23 @@ const App: Component<
 	{},
 	{
 		activeTab: "browser" | "requests" | "playground" | "settings";
+		started: boolean;
 	}
 > = function (cx) {
 	this.activeTab ??= "browser";
+	this.started ??= new URL(location.href).searchParams.has("goto");
 	return (
 		<div>
+			{use(this.started)
+				.map((started) => !started)
+				.andThen(
+					<Landing
+						go={(query: string) => {
+							navigateTo(query);
+							this.started = true;
+						}}
+					/>
+				)}
 			<div class="top-bar">
 				<div class="tab-bar">
 					<button
